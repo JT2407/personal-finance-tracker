@@ -1,5 +1,7 @@
 'use strict';
 
+const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const config = require('../config');
 
@@ -53,8 +55,23 @@ function buildApp(store) {
   app.use('/api/budgets', createBudgetController(budgetService));
   app.use('/api/reports', createReportController(reportService));
 
-  // --- 404 for unknown API routes ---
-  app.use((req, res) => {
+  // --- Static frontend (web/dist) ---
+  // Serve the built React SPA's static assets when present. This is wired up
+  // after the health check and API routers so real API traffic is never
+  // shadowed by static handling.
+  const frontendDistDir = path.join(config.rootDir, 'web', 'dist');
+  if (fs.existsSync(path.join(frontendDistDir, 'index.html'))) {
+    app.use(express.static(frontendDistDir));
+
+    // SPA fallback: any non-API GET that isn't a static file returns
+    // index.html so client-side routes like /accounts load on refresh.
+    app.get(/^\/(?!api\/).*/, (req, res) => {
+      res.sendFile(path.join(frontendDistDir, 'index.html'));
+    });
+  }
+
+  // --- 404 for unknown /api routes (and nothing else) ---
+  app.use('/api', (req, res) => {
     res.status(404).json({
       success: false,
       error: {
