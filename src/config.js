@@ -14,8 +14,9 @@ const config = Object.freeze({
   /** Local port the HTTP server listens on. */
   port: Number(process.env.PORT) || 3000,
 
-  /** Host binding. Loopback keeps the backend local-only. */
-  host: process.env.HOST || '127.0.0.1',
+  /** Host binding. 0.0.0.0 exposes the server to the network so that a
+   * hosting platform (e.g. Render) can route public traffic to it. */
+  host: process.env.HOST || '0.0.0.0',
 
   /** Root of the repository (one level above src/). */
   rootDir: ROOT_DIR,
