@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------- Design tokens (light) ---------- */
+:root {
+  --surface: 250 250 251;          /* #fafafb soft off-white, not warm paper */
+  --surface-raised: 255 255 255;
+  --surface-sunken: 243 244 246;   /* faint grey for wells */
+  --border: 229 231 235;
+  --border-strong: 203 208 214;
+  --text-primary: 17 19 22;        /* near-ink */
+  --text-secondary: 75 79 88;
+  --text-muted: 130 135 145;
+  --accent: 16 185 129;            /* emerald — locked single accent */
+  --accent-soft: 209 250 229;
+  --accent-ink: 5 122 85;
+  --danger: 244 63 94;
+  --danger-soft: 255 228 232;
+  --gold: 212 175 55;
+  --ring: 5 150 105;
+}
+
+/* ---------- Design tokens (dark / "serious money") ---------- */
+.dark {
+  --surface: 8 9 12;
+  --surface-raised: 13 15 19;
+  --surface-sunken: 18 21 26;
+  --border: 30 34 41;
+  --border-strong: 45 50 59;
+  --text-primary: 238 240 243;
+  --text-secondary: 180 186 196;
+  --text-muted: 115 121 131;
+  --accent: 16 185 129;
+  --accent-soft: 6 40 30;
+  --accent-ink: 110 231 183;
+  --danger: 244 63 94;
+  --danger-soft: 54 20 28;
+  --gold: 212 175 55;
+  --ring: 110 231 183;
+}
+
+@layer base {
+  * {
+    border-color: rgb(var(--border) / 1);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: rgb(var(--surface) / 1);
+    color: rgb(var(--text-primary) / 1);
+    font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: 'cv11' 1, 'ss01' 1;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  /* Visible focus ring — keyboard only, 2px */
+  :focus-visible {
+    outline: 2px solid rgb(var(--ring) / 1);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background-color: rgb(var(--accent) / 0.18);
+    color: rgb(var(--text-primary) / 1);
+  }
+
+  /* Suppress flash of default styles when theme is applied */
+  .theme-transition-off,
+  .theme-transition-off * {
+    transition: none !important;
+  }
+}
+
+@layer components {
+  /* Editor column in tables */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Skeleton shimmer */
+  .skeleton {
+    @apply relative overflow-hidden rounded-md;
+    background: rgb(var(--border) / 0.5);
+  }
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(var(--surface-raised) / 0.6),
+      transparent
+    );
+    animation: shimmer 1.6s infinite;
+  }
+
+  /* Hide scrollbar nice */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--border-strong) / 0.6);
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--text-muted) / 0.6);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+/* Reduced motion: replace all animation with instant / crossfade */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

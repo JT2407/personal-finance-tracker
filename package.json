@@ -1,0 +1,24 @@
+{
+  "name": "finance-tracker",
+  "version": "1.0.0",
+  "description": "Local, experimental Personal Finance Tracker backend with JSON-file persistence and a REST API.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "seed": "node src/storage/seed.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "finance",
+    "tracker",
+    "json",
+    "rest",
+    "backend"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
