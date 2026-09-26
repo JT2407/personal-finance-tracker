@@ -130,7 +130,7 @@ export function Reports() {
                 No expense data yet
               </div>
             ) : (
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-4">
                 <div className="h-48 w-48 shrink-0">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>

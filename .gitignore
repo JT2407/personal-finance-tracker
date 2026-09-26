@@ -1,5 +1,17 @@
-﻿node_modules/
+# Dependencies
+node_modules/
+
+# Runtime JSON data (local persistence)
 data/
-dist/
-.DS_Store
+data-test/
+
+# Temp files
+*.tmp
+
+# Logs
 *.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db

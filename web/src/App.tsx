@@ -2,7 +2,7 @@ import { useEffect, useState, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
-import { Sidebar } from '@/components/Sidebar';
+import { Sidebar, MobileNav } from '@/components/Sidebar';
 import { Topbar } from '@/components/Topbar';
 import { CommandPalette } from '@/components/CommandPalette';
 import { TransactionModal } from '@/components/TransactionModal';
@@ -33,10 +33,16 @@ const TITLES: Record<string, { title: string; subtitle: string }> = {
 function Shell() {
   const [commandOpen, setCommandOpen] = useState(false);
   const [newTxOpen, setNewTxOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const meta = TITLES[location.pathname] ?? TITLES['/'];
 
-  // Global ⌘K toggle
+  // Close the mobile drawer whenever the route changes.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
+  // Global ⌘K toggle.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
@@ -48,35 +54,57 @@ function Shell() {
     return () => document.removeEventListener('keydown', onKey);
   }, []);
 
+  // Lock body scroll while the mobile drawer is open.
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [menuOpen]);
+
   return (
-    <div className="flex h-screen overflow-hidden bg-[rgb(var(--surface))]">
-      <Sidebar />
+    <div className="flex h-dvh overflow-hidden bg-[rgb(var(--surface))]">
+      {/* Desktop sidebar — hidden entirely on small screens */}
+      <div className="hidden lg:block">
+        <Sidebar />
+      </div>
+
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
           title={meta.title}
           subtitle={meta.subtitle}
           onOpenCommand={() => setCommandOpen(true)}
           onNewTransaction={() => setNewTxOpen(true)}
+          onOpenMenu={() => setMenuOpen(true)}
         />
-        <main className="flex-1 overflow-y-auto px-6 py-6">
-          <Suspense
-            fallback={
-              <div className="grid h-full place-items-center">
-                <Loader2 className="h-6 w-6 animate-spin text-[rgb(var(--text-muted))]" />
-              </div>
-            }
-          >
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/accounts" element={<Accounts />} />
-              <Route path="/transactions" element={<Transactions />} />
-              <Route path="/budgets" element={<Budgets />} />
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/reports" element={<Reports />} />
-            </Routes>
-          </Suspense>
+
+        <main className="flex-1 overflow-y-auto pb-16 lg:pb-6">
+          <div className="px-4 py-4 sm:px-6 sm:py-6">
+            <Suspense
+              fallback={
+                <div className="grid h-full min-h-[50vh] place-items-center">
+                  <Loader2 className="h-6 w-6 animate-spin text-[rgb(var(--text-muted))]" />
+                </div>
+              }
+            >
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/accounts" element={<Accounts />} />
+                <Route path="/transactions" element={<Transactions />} />
+                <Route path="/budgets" element={<Budgets />} />
+                <Route path="/categories" element={<Categories />} />
+                <Route path="/reports" element={<Reports />} />
+              </Routes>
+            </Suspense>
+          </div>
         </main>
       </div>
+
+      {/* Mobile slide-in navigation drawer */}
+      <Sidebar mobile open={menuOpen} onClose={() => setMenuOpen(false)} />
+
+      {/* Mobile bottom navigation bar */}
+      <MobileNav onNewTransaction={() => setNewTxOpen(true)} />
 
       <CommandPalette
         open={commandOpen}
@@ -87,7 +115,18 @@ function Shell() {
         }}
       />
       <TransactionModal open={newTxOpen} onClose={() => setNewTxOpen(false)} />
-      <Toaster position="top-center" theme="dark" toastOptions={{ style: { background: '#16181d', color: '#eef0f3', border: '1px solid #2a2e35' } }} />
+      <Toaster
+        position="top-center"
+        theme="dark"
+        toastOptions={{
+          style: {
+            background: '#16181d',
+            color: '#eef0f3',
+            border: '1px solid #2a2e35',
+            fontSize: '14px',
+          },
+        }}
+      />
     </div>
   );
 }

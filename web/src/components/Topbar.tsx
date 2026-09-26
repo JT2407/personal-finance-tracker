@@ -1,4 +1,4 @@
-import { Search, Plus } from 'lucide-react';
+import { Search, Plus, Menu } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 
 interface TopbarProps {
@@ -7,6 +7,8 @@ interface TopbarProps {
   subtitle?: string;
   onOpenCommand: () => void;
   onNewTransaction: () => void;
+  /** Opens the mobile navigation drawer. */
+  onOpenMenu: () => void;
 }
 
 /**
@@ -14,16 +16,27 @@ interface TopbarProps {
  * title and a primary quick action. Content bleeds, chrome floats above the
  * surface with a hairline border.
  */
-export function Topbar({ title, subtitle, onOpenCommand, onNewTransaction }: TopbarProps) {
+export function Topbar({ title, subtitle, onOpenCommand, onNewTransaction, onOpenMenu }: TopbarProps) {
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between border-b border-[rgb(var(--border))] bg-[rgb(var(--surface))] px-6">
-      <div className="min-w-0">
-        <h1 className="truncate font-display text-body font-semibold tracking-tight text-[rgb(var(--text-primary))]">
-          {title}
-        </h1>
-        {subtitle && (
-          <p className="truncate text-caption text-[rgb(var(--text-muted))]">{subtitle}</p>
-        )}
+    <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-[rgb(var(--border))] bg-[rgb(var(--surface))] px-4 sm:px-6">
+      <div className="flex min-w-0 items-center gap-2">
+        {/* Mobile menu trigger */}
+        <button
+          type="button"
+          onClick={onOpenMenu}
+          aria-label="Open menu"
+          className="grid h-9 w-9 shrink-0 place-items-center rounded-control text-[rgb(var(--text-secondary))] transition-colors hover:bg-[rgb(var(--surface-sunken))] hover:text-[rgb(var(--text-primary))] active:scale-[0.97] lg:hidden"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+        <div className="min-w-0">
+          <h1 className="truncate font-display text-body font-semibold tracking-tight text-[rgb(var(--text-primary))]">
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="truncate text-caption text-[rgb(var(--text-muted))]">{subtitle}</p>
+          )}
+        </div>
       </div>
 
       <div className="flex items-center gap-2">

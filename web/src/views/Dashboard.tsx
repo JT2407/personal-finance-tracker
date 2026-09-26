@@ -58,7 +58,7 @@ export function Dashboard() {
               <NumberDisplay
                 value={totalBalance}
                 format={moneyDisplay}
-                className="font-display text-display-2xl font-semibold tracking-tight text-[rgb(var(--text-primary))]"
+                className="font-display text-display-xl font-semibold tracking-tight text-[rgb(var(--text-primary))] sm:text-display-2xl"
               />
               <p className="text-body-sm text-[rgb(var(--text-secondary))]">
                 Across {accounts.filter((a) => a.isActive).length} active account
